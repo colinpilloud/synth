@@ -1,10 +1,14 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    wavefile (0.4.0)
+    ffi (1.2.0)
+    ffi-portaudio (0.1.2)
+      ffi
+    portmidi (0.0.6)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  wavefile
+  ffi-portaudio
+  portmidi

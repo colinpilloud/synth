@@ -1,2 +1,3 @@
 source "http://rubygems.org"
-gem "wavefile"
+gem "ffi-portaudio"
+gem "portmidi"

@@ -1,19 +1,17 @@
 #!/usr/bin/env ruby
 
-require 'bundler'
-require 'wavefile'
-include WaveFile
+require 'ffi-portaudio'
+require 'radspberry'
+include DSP
 
-format = Format.new(:mono, 16, 44100)
-writer = Writer.new("my_file.wav", format)
-
-# Write a 1 second long 440Hz square wave
-cycle = ([10000] * 50) + ([-10000] * 50)
-buffer = Buffer.new(cycle, format)
-220.times do
-  writer.write(buffer)
-end
-
-writer.close()
-
-`playsound my_file.wav`
+puts "starting"
+Speaker[ Phasor.new ]
+sleep 1
+puts "changing frequency"
+Speaker.synth.freq /= 2
+sleep 1
+puts "changing frequency"
+Speaker.synth.freq /= 2
+sleep 1
+puts "muting"
+Speaker.mute
