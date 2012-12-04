@@ -26,13 +26,27 @@ MODES = [ Phasor.new, SuperSaw.new, RpmSquare.new ]
                "E5"  => 659.26
              }
 
-def write(line, column, text)
-  Curses.setpos(line, column)
+def write(row, col, text)
+  Curses.setpos(row, col)
   Curses.addstr(text);
 end
 
-def play_note note, duration = 0.1
+def draw row, col, file
+  File.open(file, "r").lines.each_with_index do |line, i|
+    write(row + i, col, line)
+  end
+end
+
+def draw_note note
+  draw 1, 50, "./ascii/#{note[0]}"
+  if note.include?("#")
+    draw 1, 59, "./ascii/sharp"
+  end
+end
+
+def play_note note
   return if @last_known.eql?(note)
+  draw_note(note)
   Speaker.synth.freq = @notes_map[note]
   Speaker.unmute
   @last_known = note
@@ -61,21 +75,20 @@ def init_screen
   Curses.timeout = 450
   Curses.init_screen
   Curses.stdscr.keypad(true) # enable arrow keys
-  # begin
+  begin
     yield
-
-  # ensure
+  ensure
     Curses.close_screen
     exit
-  # end
+  end
 end
 
 init_screen do
   switch_mode
   Speaker.mute
 
-  write(0, 0, "` to quit, space bar to change mode, < and > to change octaves")
-  write(2, 0, File.open("./ascii/piano", "r").read)
+  write(10, 0, "` to quit, space bar to change mode, < and > to change octaves")
+  draw(1, 4, "./ascii/piano")
   loop do
     case Curses.getch
     when ?a then play_note "C"
