@@ -7,6 +7,7 @@ A command-line synthesizer, built on top of radspberry and portaudio.
 ### Install radspberry:
 
 git clone git@github.com:dfl/radspberry.git
+
 rake install_gem
 
 ### Install portaudio:
