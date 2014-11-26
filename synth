@@ -27,25 +27,25 @@ MODES = [ Phasor.new, SuperSaw.new, RpmSquare.new ]
                "E5"  => 659.26
              }
 
-def write row, col, text
+def write(row, col, text)
   Curses.setpos(row, col)
   Curses.addstr(text);
 end
 
-def draw row, col, file
-  File.open(file, "r").lines.each_with_index do |line, i|
+def draw(row, col, file)
+  File.open(file, "r").each_line.each_with_index do |line, i|
     write(row + i, col, line)
   end
 end
 
-def draw_note note
+def draw_note(note)
   draw 1, 50, "./ascii/#{note[0]}"
   if note.include?("#")
     draw 1, 59, "./ascii/sharp"
   end
 end
 
-def play_note note
+def play_note(note)
   return if @last_known.eql?(note)
   draw_note(note)
   Speaker.synth.freq = @notes_map[note]
@@ -53,7 +53,7 @@ def play_note note
   @last_known = note
 end
 
-def circular_shift arr
+def circular_shift(arr)
   x = arr.shift
   arr << x
   return x
@@ -63,11 +63,11 @@ def switch_mode
   Speaker[ circular_shift MODES ]
 end
 
-def change_octave direction
+def change_octave(direction)
   if direction.eql?("up")
-    @notes_map = @notes_map.inject({}) do |h,(k,v)| h[k] = v * 2; h end
+    @notes_map.map { |k,v| @notes_map[k] = v * 2 }
   else
-    @notes_map = @notes_map.inject({}) do |h,(k,v)| h[k] = v / 2; h end
+    @notes_map.map { |k,v| @notes_map[k] = v / 2 }
   end
 end
 
@@ -80,6 +80,9 @@ def init_screen
   Curses.init_screen
   begin
     yield
+  rescue Exception => e
+    p $!
+    puts $@
   ensure
     Curses.close_screen
     exit
